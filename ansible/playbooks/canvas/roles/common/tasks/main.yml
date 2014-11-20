@@ -1,0 +1,18 @@
+---
+- name: Create canvas user
+  user:
+    name: canvas
+    state: present
+- name: Ensure the /etc/canvas folder is present and belongs to the canvas user
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: canvas
+    group: canvas
+  with_items:
+    - { path: /etc/canvas }
+    - { path: /etc/canvas/apache }
+    - { path: /etc/canvas/canvas }
+    - { path: /etc/canvas/canvas/config }
+    - { path: /etc/canvas/postgres }
+    - { path: /etc/canvas/postgres/init }

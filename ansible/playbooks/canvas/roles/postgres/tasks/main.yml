@@ -1,0 +1,30 @@
+---
+- name: Copy config files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: init/create_users.sh, dest: /etc/canvas/postgres/init/create_users.sh }
+
+- name: Ensure postgres data container is present
+  docker:
+    image: busybox
+    name: canvas_postgres_data
+    volumes:
+      - /var/lib/postgresql/data
+    detach: true
+    state: present
+- name: Ensure postgres is running
+  shell: (docker inspect canvas_postgres &> /dev/null && docker start canvas_postgres) ||  docker run -d --name canvas_postgres --net host --volumes-from canvas_postgres_data postgres
+
+- name: Wait for postgres to come online
+  wait_for: host=localhost port=5432
+- name: Create tables
+  shell: docker run --rm --net host -v /etc/canvas/postgres/init:/init postgres {{item}}
+  with_items:
+    - gosu postgres createuser canvas -h localhost --no-createdb --no-superuser --no-createrole
+    - gosu postgres createdb -h localhost canvas_development --owner=canvas
+    - gosu postgres createdb -h localhost canvas_queue_development --owner=canvas
+    - gosu postgres createdb -h localhost canvas_production --owner=canvas
+    - gosu postgres createdb -h localhost canvas_queue_production --owner=canvas
+  ignore_errors: true

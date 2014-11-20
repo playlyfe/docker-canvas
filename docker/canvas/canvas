@@ -1,0 +1,55 @@
+#!/bin/bash
+LC_ALL="en_US.utf8"
+LANG="en_US.UTF-8"
+LANGUAGE="en_US.UTF-8"
+
+if [ $# -eq 0 ]; then
+  CMD="start"
+else
+  CMD=$1
+fi
+
+chown canvasuser:canvasuser -R /var/canvas
+
+if [ "$CMD" == "setup_db" ]; then
+
+  # Initial setup
+  su - canvasuser -c "cd /var/canvas && bundle install --path vendor/bundle --without=sqlite"
+  su - canvasuser -c "cd /var/canvas && npm install"
+
+  su - canvasuser -m -c "cd /var/canvas && RAILS_ENV=production bundle exec rake db:initial_setup"
+
+elif [ "$CMD" == "compile_assets" ]; then
+
+  # Build Assets
+  su - canvasuser -m -c "cd /var/canvas && bundle exec rake canvas:compile_assets"
+
+elif [ "$CMD" == "run" ]; then
+
+  # Run
+  /usr/sbin/apache2ctl -D FOREGROUND
+
+elif [ "$CMD" == "shell" ]; then
+
+  # Arbitary command execution
+
+  args=''
+  while [ "$1" ]
+  do
+      if [ $1 == 'shell' ]; then
+          shift
+      else
+          args="$args $1"
+          shift
+      fi
+  done
+
+  set "$args"
+  # Execute shell command
+  /bin/bash -c "$@"
+
+elif [ "$CMD" == "debug" ]; then
+
+  exec /bin/bash
+
+fi

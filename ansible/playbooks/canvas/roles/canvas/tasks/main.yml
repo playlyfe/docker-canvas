@@ -1,0 +1,23 @@
+---
+- name: Ensure code folder is symlinked
+  shell: ln -sfn {{ canvas_src }} /etc/canvas/code
+- name: Copy configuration files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: database.yml.j2, dest: /etc/canvas/code/config/database.yml }
+    - { src: domain.yml.j2, dest: /etc/canvas/code/config/domain.yml }
+    - { src: outgoing_mail.yml.j2, dest: /etc/canvas/code/config/outgoing_mail.yml }
+    - { src: redis.yml.j2, dest: /etc/canvas/code/config/redis.yml }
+    - { src: security.yml.j2, dest: /etc/canvas/code/config/security.yml }
+    - { src: apache_canvas.j2, dest: /etc/canvas/apache/canvas }
+- name: Ensure Database is created
+  shell: docker run --rm --net host -e CANVAS_LMS_ADMIN_EMAIL={{ canvas.admin_email }} -e CANVAS_LMS_ADMIN_PASSWORD={{ canvas.admin_password }} -e CANVAS_LMS_ACCOUNT_NAME={{ canvas.account_name }} -e CANVAS_LMS_STATS_COLLECTION={{ canvas.stats_collection }} -v /etc/canvas/code:/var/canvas -v /etc/canvas/apache:/etc/apache2/sites-available playlyfe/canvas setup_db && touch /etc/canvas/setup.lock
+  args:
+    creates: /etc/canvas/setup.lock
+- name: Ensure Assets are generated
+  shell: docker run --rm --net host -v /etc/canvas/code:/var/canvas -v /etc/canvas/apache:/etc/apache2/sites-available playlyfe/canvas compile_assets
+
+- name: Ensure Apache2 is running
+  shell: (docker inspect canvas_apache &> /dev/null && docker start canvas_apache) || docker run --name canvas_apache --net host -d -v /etc/canvas/code:/var/canvas -v /etc/canvas/apache:/etc/apache2/sites-enabled playlyfe/canvas run

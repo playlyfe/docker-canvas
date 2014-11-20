@@ -1,0 +1,36 @@
+# do not create a queue: section for your test environment
+test:
+  adapter: postgresql
+  encoding: utf8
+  database: {{ test.database }}
+  host: {{ test.host }}
+  username: {{ test.username }}
+  timeout: 5000
+
+development:
+  adapter: postgresql
+  encoding: utf8
+  database: {{ development.database }}
+  timeout: 5000
+  queue:
+    adapter: postgresql
+    encoding: utf8
+    database: {{ development.queue.database }}
+    timeout: 5000
+
+production:
+  adapter: postgresql
+  encoding: utf8
+  database: {{ production.database }}
+  host: localhost
+  username: canvas
+  password: {{ production.password }}
+  timeout: 5000
+  queue:
+    adapter: postgresql
+    encoding: utf8
+    database: {{ production.queue.database }}
+    host: localhost
+    username: canvas
+    password: {{ production.queue.password }}
+    timeout: 5000

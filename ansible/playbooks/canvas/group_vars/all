@@ -1,0 +1,36 @@
+docker_package: lxc-docker-1.2.0
+redis_docker_image: "redis:2.8"
+
+# Set this to the location of the canvas source code
+canvas_src: /path/to/canvas/source
+
+canvas:
+  admin_email: admin@mailinator.com
+  admin_password: playlyfe
+  account_name: Admin
+  stats_collection: opt_in
+
+test:
+  database: canvas_test
+  domain: localhost
+  host: localhost
+  username: canvas
+  redis:
+    address: localhost
+
+development:
+  database: canvas_development
+  domain: "localhost:3000"
+  queue:
+    database: canvas_queue_development
+
+production:
+  database: canvas_production
+  domain: "canvas.playlyfe.com"
+  password: 'admin'
+  queue:
+    database: canvas_queue_production
+    password: 'admin'
+  redis:
+    address: localhost
+

@@ -1,0 +1,8 @@
+[postgres]
+localhost ansible_ssh_host=127.0.0.1 ansible_connection=local
+
+[redis]
+localhost ansible_ssh_host=127.0.0.1 ansible_connection=local
+
+[canvas]
+localhost ansible_ssh_host=127.0.0.1 ansible_connection=local

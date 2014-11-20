@@ -1,0 +1,53 @@
+---
+- name: Create the Docker GPG public key
+  apt_key:
+    data: "{{ lookup('file', 'Docker-GPG-KEY') }}"
+    state: present
+- name: Create the repository for Docker
+  copy:
+    src: docker.list
+    dest: /etc/apt/sources.list.d
+  notify:
+    - update apt cache
+- meta: flush_handlers
+
+#- name: Update the apt packages
+#  apt: update_cache=yes cache_valid_time=3600
+#  ignore_errors: yes
+- name: Ensure Docker is installed
+  apt:
+    pkg: "{{ docker_package }}"
+    state: present
+
+#- name: Configure docker defaults
+#  template:
+#    src: docker.j2
+#    dest: /etc/default/docker
+#  notify:
+#    - restart docker
+#- meta: flush_handlers
+
+- name: Ensure nsenter is installed
+  shell: docker run --rm -v /usr/local/bin:/target jpetazzo/nsenter
+  tags:
+    - fresh_setup
+
+- name: Ensure pip dependencies are installed
+  apt:
+    pkg: "{{ item }}"
+    state: present
+  with_items:
+    - python-pip
+    - python-virtualenv
+- name: Ensure docker-py is installed
+  pip:
+    name: docker-py
+    version: 0.3.2
+
+- name: Add canvas user to groups
+  user:
+    name: canvas
+    state: present
+    groups: docker
+    append: yes
+    createhome: no

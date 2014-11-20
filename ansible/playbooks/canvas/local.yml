@@ -1,0 +1,21 @@
+---
+- name: Setup common configuration on all hosts
+  hosts: all
+  roles:
+    - common
+    - docker
+
+- name: Setup Postgres
+  hosts: postgres
+  roles:
+    - postgres
+
+- name: Setup Redis
+  hosts: redis
+  roles:
+    - redis
+
+- name: Setup Canvas
+  hosts: canvas
+  roles:
+    - canvas
