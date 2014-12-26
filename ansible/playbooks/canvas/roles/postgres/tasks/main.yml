@@ -1,11 +1,4 @@
 ---
-- name: Copy config files
-  copy:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-  with_items:
-    - { src: init/create_users.sh, dest: /etc/canvas/postgres/init/create_users.sh }
-
 - name: Ensure postgres data container is present
   docker:
     image: busybox

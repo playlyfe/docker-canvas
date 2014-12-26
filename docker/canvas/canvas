@@ -17,16 +17,17 @@ if [ "$CMD" == "setup_db" ]; then
   su - canvasuser -c "cd /var/canvas && bundle install --path vendor/bundle --without=sqlite"
   su - canvasuser -c "cd /var/canvas && npm install"
 
-  su - canvasuser -m -c "cd /var/canvas && RAILS_ENV=production bundle exec rake db:initial_setup"
+  su - canvasuser -m -c "cd /var/canvas && RAILS_ENV=development bundle exec rake db:initial_setup"
 
 elif [ "$CMD" == "compile_assets" ]; then
 
   # Build Assets
-  su - canvasuser -m -c "cd /var/canvas && bundle exec rake canvas:compile_assets"
+  su - canvasuser -c "cd /var/canvas && export LC_ALL='en_US.utf8' && bundle exec rake canvas:compile_assets"
 
 elif [ "$CMD" == "run" ]; then
 
   # Run
+  ulimit -s 16384
   /usr/sbin/apache2ctl -D FOREGROUND
 
 elif [ "$CMD" == "shell" ]; then

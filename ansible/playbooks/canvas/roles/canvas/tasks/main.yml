@@ -11,7 +11,7 @@
     - { src: outgoing_mail.yml.j2, dest: /etc/canvas/code/config/outgoing_mail.yml }
     - { src: redis.yml.j2, dest: /etc/canvas/code/config/redis.yml }
     - { src: security.yml.j2, dest: /etc/canvas/code/config/security.yml }
-    - { src: apache_canvas.j2, dest: /etc/canvas/apache/canvas }
+    - { src: apache2.conf.j2, dest: /etc/canvas/apache/apache2.conf }
 - name: Ensure Database is created
   shell: docker run --rm --net host -e CANVAS_LMS_ADMIN_EMAIL={{ canvas.admin_email }} -e CANVAS_LMS_ADMIN_PASSWORD={{ canvas.admin_password }} -e CANVAS_LMS_ACCOUNT_NAME={{ canvas.account_name }} -e CANVAS_LMS_STATS_COLLECTION={{ canvas.stats_collection }} -v /etc/canvas/code:/var/canvas -v /etc/canvas/apache:/etc/apache2/sites-available playlyfe/canvas setup_db && touch /etc/canvas/setup.lock
   args:
@@ -20,4 +20,4 @@
   shell: docker run --rm --net host -v /etc/canvas/code:/var/canvas -v /etc/canvas/apache:/etc/apache2/sites-available playlyfe/canvas compile_assets
 
 - name: Ensure Apache2 is running
-  shell: (docker inspect canvas_apache &> /dev/null && docker start canvas_apache) || docker run --name canvas_apache --net host -d -v /etc/canvas/code:/var/canvas -v /etc/canvas/apache:/etc/apache2/sites-enabled playlyfe/canvas run
+  shell: (docker inspect canvas_apache &> /dev/null && docker start canvas_apache) || docker run --name canvas_apache --net host -d -v /etc/canvas/code:/var/canvas -v /etc/canvas/apache/apache2.conf:/etc/apache2/apache2.conf playlyfe/canvas run

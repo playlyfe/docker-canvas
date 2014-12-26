@@ -11,18 +11,22 @@ development:
   adapter: postgresql
   encoding: utf8
   database: {{ development.database }}
+  host: {{ development.host }}
+  username: canvas
   timeout: 5000
   queue:
     adapter: postgresql
     encoding: utf8
     database: {{ development.queue.database }}
+    host: {{ development.queue.host }}
+    username: canvas
     timeout: 5000
 
 production:
   adapter: postgresql
   encoding: utf8
   database: {{ production.database }}
-  host: localhost
+  host: {{ production.host }}
   username: canvas
   password: {{ production.password }}
   timeout: 5000
@@ -30,7 +34,7 @@ production:
     adapter: postgresql
     encoding: utf8
     database: {{ production.queue.database }}
-    host: localhost
+    host: {{ production.queue.host }}
     username: canvas
     password: {{ production.queue.password }}
     timeout: 5000

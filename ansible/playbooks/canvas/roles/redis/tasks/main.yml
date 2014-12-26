@@ -8,4 +8,4 @@
     detach: true
     state: present
 - name: Ensure redis is running
-  shell: (docker inspect canvas_redis &> /dev/null && docker start canvas_redis) || docker run --name canvas_redis --net host --volumes-from canvas_redis_data -d {{ redis_docker_image }}
+  shell: (docker inspect canvas_redis &> /dev/null && docker start canvas_redis) || docker run --name canvas_redis --net host --volumes-from canvas_redis_data -d {{ redis_docker_image }} redis-server --appendonly yes

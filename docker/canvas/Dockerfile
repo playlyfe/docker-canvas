@@ -27,12 +27,12 @@ RUN dpkg-reconfigure locales
 
 # Create canvas user
 RUN adduser --disabled-password --gecos canvas canvasuser
+RUN chown -R canvasuser /usr/lib/node_modules
 
 VOLUME /var/canvas
 
 COPY canvas /usr/bin/canvas
 RUN chmod 755 /usr/bin/canvas
-
 ENV CANVAS_LMS_ADMIN_EMAIL canvas_admin@mailinator.com
 ENV CANVAS_LMS_ADMIN_PASSWORD admin123
 ENV CANVAS_LMS_ACCOUNT_NAME Admin

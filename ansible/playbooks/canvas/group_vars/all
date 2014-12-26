@@ -3,6 +3,7 @@ redis_docker_image: "redis:2.8"
 
 # Set this to the location of the canvas source code
 canvas_src: /path/to/canvas/source
+apache_port: 3000
 
 canvas:
   admin_email: admin@mailinator.com
@@ -21,15 +22,19 @@ test:
 development:
   database: canvas_development
   domain: "localhost:3000"
+  host: localhost
   queue:
     database: canvas_queue_development
+    host: localhost
 
 production:
   database: canvas_production
   domain: "canvas.playlyfe.com"
+  host: localhost
   password: 'admin'
   queue:
     database: canvas_queue_production
+    host: localhost
     password: 'admin'
   redis:
     address: localhost
