@@ -1,11 +1,3 @@
 ---
-- name: Ensure redis data container is present
-  docker:
-    image: busybox
-    name: canvas_redis_data
-    volumes:
-      - /data
-    detach: true
-    state: present
 - name: Ensure redis is running
-  shell: (docker inspect canvas_redis &> /dev/null && docker start canvas_redis) || docker run --name canvas_redis --net host --volumes-from canvas_redis_data -d {{ redis_docker_image }} redis-server --appendonly yes
+  shell: (docker inspect canvas_redis &> /dev/null && docker start canvas_redis) || docker run --name canvas_redis --net host -d {{ redis_docker_image }} redis-server
